@@ -1,6 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:gendec/services/calculator_service.dart';
-import 'package:gendec/models/calculation_result.dart';
 
 void main() {
   group('CalculatorService', () {

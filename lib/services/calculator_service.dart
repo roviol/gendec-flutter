@@ -29,79 +29,80 @@ class CalculatorService {
     final dotIndex = decimalStr.indexOf('.');
     final entero = dotIndex >= 0 ? decimalStr.substring(0, dotIndex) : decimalStr;
     final enteroStr = entero.toString();
-    final periodoStr = decimalStr.substring(decimalStr.length - periodo);
-    final periodoRep = periodoStr;
     final parteDecimal = decimalStr.substring(enteroStr.length);
-    final antePeriodo = parteDecimal.substring(0, parteDecimal.length - periodoStr.length);
 
-    if (parteDecimal.length > periodo) {
-      if (periodo == 0) {
-        final numeradorA = enteroStr;
-        final numeradorB = antePeriodo.substring(1);
-        final numeradorC = '${int.parse(numeradorA)}$numeradorB';
-        const denominadorA = '1';
-        final denominadorB = _padRight('0', parteDecimal.length - 1, '0');
-        final denominadorC = '$denominadorA$denominadorB';
-
-        return CalculationResult(
-          decimalMostrar: decimalStr,
-          entero: entero,
-          parteDecimal: parteDecimal,
-          antePeriodo: antePeriodo,
-          periodoRep: periodoRep,
-          numeradorA: numeradorA,
-          numeradorB: numeradorB,
-          numeradorC: numeradorC,
-          denominadorA: denominadorA,
-          denominadorB: denominadorB,
-          denominadorC: denominadorC,
-          resultado: _safeEval(numeradorC),
-          finalStr: '',
-        );
-      } else {
-        final decimalMostrar = '$decimalStr$periodoStr$periodoStr...';
-        final numeradorA = '${int.parse(enteroStr + parteDecimal.substring(1))}';
-        final numeradorB = '${int.parse(enteroStr + antePeriodo.substring(1))}';
-
-        late String numeradorC;
-        if (numeradorB == '0') {
-          numeradorC = numeradorA;
-        } else {
-          numeradorC = '$numeradorA - $numeradorB';
-        }
-
-        final denominadorA = _padRight('9', periodoRep.length, '9');
-        final denominadorB = _padRight('', antePeriodo.length - 1, '0');
-        final denominadorC = '$denominadorA$denominadorB';
-
-        return CalculationResult(
-          decimalMostrar: decimalMostrar,
-          entero: entero,
-          parteDecimal: parteDecimal,
-          antePeriodo: antePeriodo,
-          periodoRep: periodoRep,
-          numeradorA: numeradorA,
-          numeradorB: numeradorB,
-          numeradorC: numeradorC,
-          denominadorA: denominadorA,
-          denominadorB: denominadorB,
-          denominadorC: denominadorC,
-          resultado: _safeEval(numeradorC),
-          finalStr: '...',
-        );
-      }
-    } else {
+    if (parteDecimal.length <= periodo) {
       return CalculationResult(
         decimalMostrar: '',
         entero: entero,
         parteDecimal: parteDecimal,
-        antePeriodo: antePeriodo,
-        periodoRep: periodoRep,
+        antePeriodo: '',
+        periodoRep: '',
         numeradorC: 'Error',
         denominadorC: '',
         resultado: 'Periodo mayor que la parte decimal',
         finalStr: '',
       );
     }
+
+    final periodoStr = parteDecimal.substring(parteDecimal.length - periodo);
+    final periodoRep = periodoStr;
+    final antePeriodo = parteDecimal.substring(0, parteDecimal.length - periodoStr.length);
+
+    if (periodo == 0) {
+      final numeradorA = enteroStr;
+      final numeradorB = antePeriodo.substring(1);
+      final numeradorC = '${int.parse(numeradorA)}$numeradorB';
+      const denominadorA = '1';
+      final denominadorB = _padRight('0', parteDecimal.length - 1, '0');
+      final denominadorC = '$denominadorA$denominadorB';
+
+      return CalculationResult(
+        decimalMostrar: decimalStr,
+        entero: entero,
+        parteDecimal: parteDecimal,
+        antePeriodo: antePeriodo,
+        periodoRep: periodoRep,
+        numeradorA: numeradorA,
+        numeradorB: numeradorB,
+        numeradorC: numeradorC,
+        denominadorA: denominadorA,
+        denominadorB: denominadorB,
+        denominadorC: denominadorC,
+        resultado: _safeEval(numeradorC),
+        finalStr: '',
+      );
+    }
+
+    final decimalMostrar = '$decimalStr$periodoStr$periodoStr...';
+    final numeradorA = '${int.parse(enteroStr + parteDecimal.substring(1))}';
+    final numeradorB = '${int.parse(enteroStr + antePeriodo.substring(1))}';
+
+    late String numeradorC;
+    if (numeradorB == '0') {
+      numeradorC = numeradorA;
+    } else {
+      numeradorC = '$numeradorA - $numeradorB';
+    }
+
+    final denominadorA = _padRight('9', periodoRep.length, '9');
+    final denominadorB = _padRight('', antePeriodo.length - 1, '0');
+    final denominadorC = '$denominadorA$denominadorB';
+
+    return CalculationResult(
+      decimalMostrar: decimalMostrar,
+      entero: entero,
+      parteDecimal: parteDecimal,
+      antePeriodo: antePeriodo,
+      periodoRep: periodoRep,
+      numeradorA: numeradorA,
+      numeradorB: numeradorB,
+      numeradorC: numeradorC,
+      denominadorA: denominadorA,
+      denominadorB: denominadorB,
+      denominadorC: denominadorC,
+      resultado: _safeEval(numeradorC),
+      finalStr: '...',
+    );
   }
 }
