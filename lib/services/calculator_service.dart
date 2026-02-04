@@ -38,8 +38,8 @@ class CalculatorService {
       if (periodo == 0) {
         final numeradorA = enteroStr;
         final numeradorB = antePeriodo.substring(1);
-        final numeradorC = '${int.parse(numeradorA)}${numeradorB}';
-        final denominadorA = '1';
+        final numeradorC = '${int.parse(numeradorA)}$numeradorB';
+        const denominadorA = '1';
         final denominadorB = _padRight('0', parteDecimal.length - 1, '0');
         final denominadorC = '$denominadorA$denominadorB';
 
