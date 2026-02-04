@@ -1,0 +1,28 @@
+# Files and directories created by pub
+.dart_tool/
+.packages
+build/
+pubspec.lock
+
+# Directory created by pub for getting dependencies
+.pub/
+
+# Local configuration file (sdk path, properties, etc)
+local.properties
+
+# IDE
+.idea/
+.vscode/
+*.iml
+
+# macOS
+.DS_Store
+
+# Android
+android/local.properties
+
+# iOS
+ios/Runner/Info.plist
+
+# Test coverage
+coverage/
