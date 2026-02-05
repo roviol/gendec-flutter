@@ -21,8 +21,5 @@ local.properties
 # Android
 android/local.properties
 
-# iOS
-ios/Runner/Info.plist
-
 # Test coverage
 coverage/
