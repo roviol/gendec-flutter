@@ -76,17 +76,12 @@ jobs:
         run: |
           PBXPROJ="ios/Runner.xcodeproj/project.pbxproj"
 
-          # Update bundle identifier (only Runner target, skip RunnerTests)
-          perl -i -pe "s/PRODUCT_BUNDLE_IDENTIFIER = (?!.*RunnerTests)[^;]+;/PRODUCT_BUNDLE_IDENTIFIER = ${IOS_BUNDLE_ID};/g" "$PBXPROJ"
+          # Replace bundle ID AND inject signing settings directly into pbxproj
+          # (target-level buildSettings, highest priority - xcconfig was not enough)
+          perl -i -pe "s/PRODUCT_BUNDLE_IDENTIFIER = (?!.*RunnerTests)[^;]+;/PRODUCT_BUNDLE_IDENTIFIER = ${IOS_BUNDLE_ID};\n\t\t\t\tCODE_SIGN_STYLE = Manual;\n\t\t\t\tDEVELOPMENT_TEAM = ${IOS_TEAM_ID};\n\t\t\t\tPROVISIONING_PROFILE_SPECIFIER = \"${IOS_PROVISIONING_PROFILE_NAME}\";/g" "$PBXPROJ"
 
-          # Change CODE_SIGN_IDENTITY from Developer to Distribution
+          # Change CODE_SIGN_IDENTITY from Developer to Distribution at project level
           sed -i '' 's/"CODE_SIGN_IDENTITY\[sdk=iphoneos\*\]" = "iPhone Developer"/"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution"/g' "$PBXPROJ"
-
-          # Add signing settings via Release.xcconfig
-          echo "" >> ios/Flutter/Release.xcconfig
-          echo "CODE_SIGN_STYLE=Manual" >> ios/Flutter/Release.xcconfig
-          echo "DEVELOPMENT_TEAM=${IOS_TEAM_ID}" >> ios/Flutter/Release.xcconfig
-          echo "PROVISIONING_PROFILE_SPECIFIER=${IOS_PROVISIONING_PROFILE_NAME}" >> ios/Flutter/Release.xcconfig
 
       - name: Create ExportOptions.plist
         if: steps.ios_signing.outputs.has_signing == 'true'
