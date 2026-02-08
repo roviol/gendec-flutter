@@ -76,13 +76,19 @@ jobs:
         run: |
           PBXPROJ="ios/Runner.xcodeproj/project.pbxproj"
 
-          # Replace bundle ID AND inject signing settings directly into pbxproj
-          # (target-level buildSettings, highest priority - xcconfig was not enough)
-          perl -i -pe "s/PRODUCT_BUNDLE_IDENTIFIER = (?!.*RunnerTests)[^;]+;/PRODUCT_BUNDLE_IDENTIFIER = ${IOS_BUNDLE_ID};\n\t\t\t\tCODE_SIGN_STYLE = Manual;\n\t\t\t\tDEVELOPMENT_TEAM = ${IOS_TEAM_ID};\n\t\t\t\tPROVISIONING_PROFILE_SPECIFIER = \"${IOS_PROVISIONING_PROFILE_NAME}\";/g" "$PBXPROJ"
+          # Inject all signing settings at target level in pbxproj (highest priority)
+          # Change "Apple Development" to "Apple Distribution" if using a distribution certificate
+          perl -i -pe "s/PRODUCT_BUNDLE_IDENTIFIER = (?!.*RunnerTests)[^;]+;/PRODUCT_BUNDLE_IDENTIFIER = ${IOS_BUNDLE_ID};\n\t\t\t\tCODE_SIGN_STYLE = Manual;\n\t\t\t\tDEVELOPMENT_TEAM = ${IOS_TEAM_ID};\n\t\t\t\tPROVISIONING_PROFILE_SPECIFIER = \"${IOS_PROVISIONING_PROFILE_NAME}\";\n\t\t\t\t\"CODE_SIGN_IDENTITY[sdk=iphoneos*]\" = \"Apple Development\";/g" "$PBXPROJ"
 
-          # Ensure CODE_SIGN_IDENTITY uses Apple Development (matches dev certificate)
-          # Change to "iPhone Distribution" or "Apple Distribution" if using a distribution certificate
-          sed -i '' 's/"CODE_SIGN_IDENTITY\[sdk=iphoneos\*\]" = "iPhone Developer"/"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "Apple Development"/g' "$PBXPROJ"
+      - name: Verify signing configuration
+        if: steps.ios_signing.outputs.has_signing == 'true'
+        run: |
+          echo "=== Installed certificates ==="
+          security find-identity -v -p codesigning "$RUNNER_TEMP/app-signing.keychain-db"
+          echo "=== CODE_SIGN_IDENTITY in pbxproj ==="
+          grep -i "CODE_SIGN_IDENTITY" ios/Runner.xcodeproj/project.pbxproj || echo "Not found"
+          echo "=== CODE_SIGN_STYLE in pbxproj ==="
+          grep -i "CODE_SIGN_STYLE" ios/Runner.xcodeproj/project.pbxproj || echo "Not found"
 
       - name: Create ExportOptions.plist
         if: steps.ios_signing.outputs.has_signing == 'true'
