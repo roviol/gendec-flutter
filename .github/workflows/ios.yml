@@ -80,8 +80,9 @@ jobs:
           # (target-level buildSettings, highest priority - xcconfig was not enough)
           perl -i -pe "s/PRODUCT_BUNDLE_IDENTIFIER = (?!.*RunnerTests)[^;]+;/PRODUCT_BUNDLE_IDENTIFIER = ${IOS_BUNDLE_ID};\n\t\t\t\tCODE_SIGN_STYLE = Manual;\n\t\t\t\tDEVELOPMENT_TEAM = ${IOS_TEAM_ID};\n\t\t\t\tPROVISIONING_PROFILE_SPECIFIER = \"${IOS_PROVISIONING_PROFILE_NAME}\";/g" "$PBXPROJ"
 
-          # Change CODE_SIGN_IDENTITY from Developer to Distribution at project level
-          sed -i '' 's/"CODE_SIGN_IDENTITY\[sdk=iphoneos\*\]" = "iPhone Developer"/"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution"/g' "$PBXPROJ"
+          # Ensure CODE_SIGN_IDENTITY uses Apple Development (matches dev certificate)
+          # Change to "iPhone Distribution" or "Apple Distribution" if using a distribution certificate
+          sed -i '' 's/"CODE_SIGN_IDENTITY\[sdk=iphoneos\*\]" = "iPhone Developer"/"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "Apple Development"/g' "$PBXPROJ"
 
       - name: Create ExportOptions.plist
         if: steps.ios_signing.outputs.has_signing == 'true'
@@ -96,7 +97,7 @@ jobs:
           <plist version="1.0">
           <dict>
               <key>method</key>
-              <string>app-store</string>
+              <string>development</string>
               <key>teamID</key>
               <string>${IOS_TEAM_ID}</string>
               <key>signingStyle</key>
@@ -107,7 +108,7 @@ jobs:
                   <string>${IOS_PROVISIONING_PROFILE_NAME}</string>
               </dict>
               <key>signingCertificate</key>
-              <string>iPhone Distribution</string>
+              <string>Apple Development</string>
               <key>uploadBitcode</key>
               <false/>
               <key>uploadSymbols</key>

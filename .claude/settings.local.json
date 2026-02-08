@@ -1,7 +1,11 @@
 {
   "permissions": {
     "allow": [
-      "Bash(git -C \"E:\\\\proyectos\\\\roviol\\\\gendec-flutter\" log --oneline -10)"
+      "Bash(git -C \"E:\\\\proyectos\\\\roviol\\\\gendec-flutter\" log --oneline -10)",
+      "Bash(test:*)",
+      "Bash(openssl smime:*)",
+      "Bash(GIT_SEQUENCE_EDITOR=\"sed -i ''/6aca8b3/d''\" git rebase -i 2c6c338)",
+      "Bash(git stash:*)"
     ]
   }
 }
