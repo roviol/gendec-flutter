@@ -62,6 +62,19 @@ El proyecto incluye workflows para:
 - **Android Build**: Compila y genera APK en cada push a main
 - **iOS Build**: Compila y genera IPA en cada push a main
 
+### Configuración de Firma Automática (CI/CD)
+
+El proyecto está configurado para firmar automáticamente las builds de Android e iOS usando GitHub Actions. Para habilitar esta funcionalidad:
+
+1. **Android**: Se requiere un keystore en formato `.jks` y sus credenciales
+2. **iOS**: Se requiere un certificado `.p12` y un provisioning profile
+
+Los archivos necesarios deben codificarse en base64 y configurarse como secrets en GitHub. El proceso detallado se encuentra en `SIGNING_SETUP.md`.
+
+Cuando los secrets no están configurados (por ejemplo en PRs de forks), el sistema automáticamente utiliza:
+- **Android**: Firma debug (funciona normalmente)
+- **iOS**: Build para simulador en modo debug (sin code signing)
+
 ## Licencia
 
 MIT
